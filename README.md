@@ -23,7 +23,7 @@ A **full-stack, AI-powered SaaS application** designed to showcase modern softwa
 | Backend | FastAPI, Python 3.11+ |
 | Database | MongoDB |
 | AI/ML | Transformers / Custom ML Models |
-| DevOps | Docker, CI/CD ready |
+
 
 ---
 
