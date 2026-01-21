@@ -1,0 +1,40 @@
+.App {
+  min-height: 100vh;
+  background: #020617;
+}
+
+.glass-effect {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.grid-border {
+  background-image: 
+    linear-gradient(to right, rgba(30, 41, 59, 0.5) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(30, 41, 59, 0.5) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.code-editor {
+  font-family: 'JetBrains Mono', monospace;
+  background: #0B1120;
+  border: 1px solid #1E293B;
+  border-radius: 0.5rem;
+}
+
+.severity-critical {
+  @apply bg-red-500/10 text-red-400 border border-red-500/30;
+}
+
+.severity-high {
+  @apply bg-orange-500/10 text-orange-400 border border-orange-500/30;
+}
+
+.severity-medium {
+  @apply bg-yellow-500/10 text-yellow-400 border border-yellow-500/30;
+}
+
+.severity-low {
+  @apply bg-blue-500/10 text-blue-400 border border-blue-500/30;
+}
