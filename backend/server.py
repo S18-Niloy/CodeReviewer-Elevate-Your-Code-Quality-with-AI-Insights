@@ -9,10 +9,17 @@ from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime, timezone
-from LLMIntegrations.llm_chat import LlmChat
-from LLMIntegrations.messages import UserMessage
 
 import json
+import sys
+from pathlib import Path
+
+# Add project root to sys.path
+sys.path.append(str(Path(__file__).parent.parent))
+from LLMIntegrations.llm.chat import LlmChat, UserMessage
+
+
+
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -68,21 +75,30 @@ class CodeReviewResponse(BaseModel):
     overall_score: int
     results: List[AnalysisResult]
 
-# Helper function to analyze code with Gemini
-async def analyze_code_with_gemini(code: str, language: str, analysis_type: str) -> Dict[str, Any]:
+
+logger = logging.getLogger(__name__)
+
+async def analyze_code_with_gemini(code: str, language: str, analysis_type: str) -> dict:
+    """
+    Analyze code using Gemini API (v1beta format)
+    """
     try:
-        api_key = os.environ.get('LLM_KEY', '')
+        api_key = os.environ.get("LLM_KEY", "")
         if not api_key:
             raise ValueError("LLM_KEY not found")
-        
+
+        from LLMIntegrations.llm.chat import LlmChat, UserMessage
+
         chat = LlmChat(
             api_key=api_key,
             session_id=f"code_review_{uuid.uuid4()}",
-            system_message="You are an expert code reviewer. Analyze code and provide structured feedback."
+            system_message="You are an expert code reviewer. Analyze code and provide structured JSON feedback."
         ).with_model("gemini", "gemini-2.5-flash")
-        
+
         prompts = {
-            "code_quality": f"""Analyze this {language} code for code quality issues. Return a JSON with:
+            "code_quality": f"""
+Analyze this {language} code for code quality issues. 
+Return JSON only with:
 - score (0-100)
 - issues: array of {{severity: "critical"|"high"|"medium"|"low", line: number|null, message: string, suggestion: string}}
 
@@ -90,9 +106,10 @@ Code:
 ```{language}
 {code}
 ```
-
-Return ONLY valid JSON, no markdown.""",
-            "security": f"""Analyze this {language} code for security vulnerabilities. Return a JSON with:
+""",
+            "security": f"""
+Analyze this {language} code for security vulnerabilities.
+Return JSON only with:
 - score (0-100, higher is more secure)
 - issues: array of {{severity: "critical"|"high"|"medium"|"low", line: number|null, message: string, suggestion: string}}
 
@@ -100,9 +117,10 @@ Code:
 ```{language}
 {code}
 ```
-
-Return ONLY valid JSON, no markdown.""",
-            "performance": f"""Analyze this {language} code for performance issues. Return a JSON with:
+""",
+            "performance": f"""
+Analyze this {language} code for performance issues.
+Return JSON only with:
 - score (0-100)
 - issues: array of {{severity: "critical"|"high"|"medium"|"low", line: number|null, message: string, suggestion: string}}
 
@@ -110,9 +128,10 @@ Code:
 ```{language}
 {code}
 ```
-
-Return ONLY valid JSON, no markdown.""",
-            "best_practices": f"""Analyze this {language} code for adherence to best practices. Return a JSON with:
+""",
+            "best_practices": f"""
+Analyze this {language} code for adherence to best practices.
+Return JSON only with:
 - score (0-100)
 - issues: array of {{severity: "critical"|"high"|"medium"|"low", line: number|null, message: string, suggestion: string}}
 
@@ -120,29 +139,42 @@ Code:
 ```{language}
 {code}
 ```
-
-Return ONLY valid JSON, no markdown."""
+"""
         }
-        
+
         prompt = prompts.get(analysis_type, prompts["code_quality"])
         user_message = UserMessage(text=prompt)
-        response = await chat.send_message(user_message)
-        
-        # Clean response and parse JSON
-        response_text = response.strip()
-        if response_text.startswith('```json'):
+
+        response_text = await chat.send_message(user_message)
+
+        # Clean response text in case it contains ```json blocks
+        response_text = response_text.strip()
+        if response_text.startswith("```json"):
             response_text = response_text[7:]
-        if response_text.startswith('```'):
+        if response_text.startswith("```"):
             response_text = response_text[3:]
-        if response_text.endswith('```'):
+        if response_text.endswith("```"):
             response_text = response_text[:-3]
         response_text = response_text.strip()
-        
+
+        # Parse JSON safely
         result = json.loads(response_text)
         return result
+
     except Exception as e:
-        logger.error(f"Error in analyze_code_with_gemini: {str(e)}")
-        return {"score": 50, "issues": []}
+        # Return a default internal error if Gemini fails
+        return {
+            "score": 0,
+            "issues": [
+                {
+                    "severity": "medium",
+                    "line": None,
+                    "message": f"Internal error: {str(e)}",
+                    "suggestion": "Gemini API error"
+                }
+            ]
+        }
+
 
 # API Routes
 @api_router.post("/reviews/analyze", response_model=CodeReviewResponse)

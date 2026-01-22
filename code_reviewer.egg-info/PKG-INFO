@@ -1,0 +1,12 @@
+Metadata-Version: 2.4
+Name: code_reviewer
+Version: 0.1.0
+Summary: Code Reviewer with LLM integrations
+Author-email: Soumik Deb Niloy <you@example.com>
+Requires-Dist: fastapi
+Requires-Dist: uvicorn
+Requires-Dist: python-dotenv
+Requires-Dist: pydantic
+Requires-Dist: motor
+Requires-Dist: starlette
+Requires-Dist: requests

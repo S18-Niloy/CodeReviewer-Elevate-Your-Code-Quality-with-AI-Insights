@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 
 class CodeReviewerAPITester:
-    def __init__(self, base_url="https://dev-ai-helper-2.preview.emergentagent.com"):
+    def __init__(self, base_url="http://127.0.0.1:8001"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.tests_run = 0
@@ -17,7 +17,7 @@ class CodeReviewerAPITester:
         headers = {'Content-Type': 'application/json'}
 
         self.tests_run += 1
-        print(f"\n🔍 Testing {name}...")
+        print(f"\n Testing {name}...")
         print(f"   URL: {url}")
         
         try:
@@ -31,7 +31,7 @@ class CodeReviewerAPITester:
             success = response.status_code == expected_status
             if success:
                 self.tests_passed += 1
-                print(f"✅ Passed - Status: {response.status_code}")
+                print(f" Passed - Status: {response.status_code}")
                 try:
                     response_data = response.json()
                     print(f"   Response keys: {list(response_data.keys()) if isinstance(response_data, dict) else 'Non-dict response'}")
@@ -39,7 +39,7 @@ class CodeReviewerAPITester:
                 except:
                     return True, {}
             else:
-                print(f"❌ Failed - Expected {expected_status}, got {response.status_code}")
+                print(f" Failed - Expected {expected_status}, got {response.status_code}")
                 try:
                     error_detail = response.json()
                     print(f"   Error: {error_detail}")
@@ -48,7 +48,7 @@ class CodeReviewerAPITester:
                 return False, {}
 
         except Exception as e:
-            print(f"❌ Failed - Error: {str(e)}")
+            print(f" Failed - Error: {str(e)}")
             return False, {}
 
     def test_analyze_code(self):
@@ -103,7 +103,7 @@ print(result)
     def test_get_single_review(self):
         """Test get single review endpoint"""
         if not self.created_review_id:
-            print("❌ Skipping single review test - no review ID available")
+            print(" Skipping single review test - no review ID available")
             return False
             
         success, response = self.run_test(
@@ -123,7 +123,7 @@ print(result)
     def test_delete_review(self):
         """Test delete review endpoint"""
         if not self.created_review_id:
-            print("❌ Skipping delete test - no review ID available")
+            print(" Skipping delete test - no review ID available")
             return False
             
         success, response = self.run_test(
@@ -140,7 +140,7 @@ print(result)
 
     def test_invalid_endpoints(self):
         """Test error handling"""
-        print("\n🔍 Testing Error Handling...")
+        print("\n Testing Error Handling...")
         
         # Test non-existent review
         success, _ = self.run_test(
@@ -162,7 +162,7 @@ print(result)
         return success and success2
 
 def main():
-    print("🚀 Starting Code Reviewer API Tests")
+    print(" Starting Code Reviewer API Tests")
     print("=" * 50)
     
     tester = CodeReviewerAPITester()
@@ -180,19 +180,19 @@ def main():
         try:
             test()
         except Exception as e:
-            print(f"❌ Test failed with exception: {str(e)}")
+            print(f" Test failed with exception: {str(e)}")
     
     # Print results
     print("\n" + "=" * 50)
-    print(f"📊 Tests completed: {tester.tests_passed}/{tester.tests_run}")
+    print(f" Tests completed: {tester.tests_passed}/{tester.tests_run}")
     success_rate = (tester.tests_passed / tester.tests_run * 100) if tester.tests_run > 0 else 0
-    print(f"📈 Success rate: {success_rate:.1f}%")
+    print(f" Success rate: {success_rate:.1f}%")
     
     if success_rate >= 80:
-        print("🎉 Backend API tests PASSED!")
+        print(" Backend API tests PASSED!")
         return 0
     else:
-        print("⚠️  Backend API tests have issues")
+        print(" Backend API tests have issues")
         return 1
 
 if __name__ == "__main__":
