@@ -9,7 +9,9 @@ from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime, timezone
-from emergentintegrations.llm.chat import LlmChat, UserMessage
+from LLMIntegrations.llm_chat import LlmChat
+from LLMIntegrations.messages import UserMessage
+
 import json
 
 ROOT_DIR = Path(__file__).parent
@@ -69,9 +71,9 @@ class CodeReviewResponse(BaseModel):
 # Helper function to analyze code with Gemini
 async def analyze_code_with_gemini(code: str, language: str, analysis_type: str) -> Dict[str, Any]:
     try:
-        api_key = os.environ.get('EMERGENT_LLM_KEY', '')
+        api_key = os.environ.get('LLM_KEY', '')
         if not api_key:
-            raise ValueError("EMERGENT_LLM_KEY not found")
+            raise ValueError("LLM_KEY not found")
         
         chat = LlmChat(
             api_key=api_key,
