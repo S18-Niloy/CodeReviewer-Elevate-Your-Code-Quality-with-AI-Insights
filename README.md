@@ -71,7 +71,7 @@ yarn install
 MONGO_URL="mongodb://localhost:27017"
 DB_NAME="code_reviewer_db"
 CORS_ORIGINS="http://localhost:3000"
-EMERGENT_LLM_KEY=sk-emergent-4D0A317E6B149FcAb0
+LLM_KEY=paste your key
 ```
 
 ### Frontend `.env`
