@@ -101,3 +101,8 @@ REACT_APP_BACKEND_URL=http://localhost:8001
 4. ***Access the Application***
 Open your browser and go to:
 http://localhost:3000
+
+
+### For making it live
+
+Upload the Zip file of your whole project to (emergent)[https://app.emergent.sh/home] and set the prompt "Make it live"
