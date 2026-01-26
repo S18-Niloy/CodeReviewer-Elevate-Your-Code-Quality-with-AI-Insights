@@ -102,6 +102,8 @@ REACT_APP_BACKEND_URL=http://localhost:8001
 Open your browser and go to:
 http://localhost:3000
 
-[![Watch the video](https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg)](https://youtu.be/0ltWHmtjNEw)
+# Video
+
+[![Watch the video](https://youtu.be/0ltWHmtjNEw)
 
 
