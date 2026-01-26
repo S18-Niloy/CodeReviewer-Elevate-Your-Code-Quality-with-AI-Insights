@@ -104,6 +104,5 @@ http://localhost:3000
 
 # Video
 
-[![Watch the video](https://youtu.be/0ltWHmtjNEw)
-
+▶️ [Watch Demo Video](https://youtu.be/0ltWHmtjNEw)
 
