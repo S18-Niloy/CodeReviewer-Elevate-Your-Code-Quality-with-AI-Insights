@@ -103,5 +103,4 @@ Open your browser and go to:
 http://localhost:3000
 
 
-### For making it live
-Upload the Zip file of your whole project to [Emergent](https://app.emergent.sh/home) and set the prompt "Make it live".
+
